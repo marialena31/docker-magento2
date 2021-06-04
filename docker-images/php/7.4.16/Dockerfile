@@ -56,11 +56,12 @@ RUN cd /tmp \
   && rm ioncube_loaders_lin_x86-64.tar.gz \
   && docker-php-ext-enable ioncube
 
-RUN pecl channel-update pecl.php.net \
-  && pecl install xdebug
+RUN pecl channel-update pecl.php.net 
+  
+# Install xdebug
+RUN pecl install xdebug
 
-RUN docker-php-ext-enable xdebug \
-  && sed -i -e 's/^zend_extension/\;zend_extension/g' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN docker-php-ext-enable xdebug
 
 RUN curl -o /tmp/ssh2-1.2.tgz https://pecl.php.net/get/ssh2 \
   && pear install /tmp/ssh2-1.2.tgz \
@@ -92,6 +93,8 @@ COPY ./www.conf /usr/local/etc/php-fpm.d/
 COPY ./php.ini /usr/local/etc/php/
 COPY ./php-fpm.conf /usr/local/etc/
 COPY bin/cronstart /usr/local/bin/
+
+RUN mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.off
 
 RUN mkdir -p /etc/nginx/html /var/www/html /sock \
   && chown -R app:app /etc/nginx /var/www /usr/local/etc/php/conf.d /sock
